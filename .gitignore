@@ -37,6 +37,7 @@ yarn-error.log*
 
 # production data (SQLite DB on server)
 /data/
+/data/**
 
 # local scrape URL lists (large, not needed in repo)
 scripts/liteapks-urls.txt

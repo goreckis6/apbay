@@ -24,6 +24,13 @@ fi
 mkdir -p data public/images
 chown -R 1001:1001 data 2>/dev/null || true
 
+if [[ -f data/prod.db ]]; then
+  cp -a data/prod.db "data/prod.db.bak.$(date +%Y%m%d%H%M%S)"
+  echo "==> Database backup created — prod.db will NOT be deleted or replaced"
+else
+  echo "==> No prod.db yet — migrations will create an empty database"
+fi
+
 cat > .env <<EOF
 DATABASE_URL=file:/app/data/prod.db
 NEXT_PUBLIC_SITE_URL=https://${DOMAIN}

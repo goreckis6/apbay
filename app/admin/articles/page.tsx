@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-
+import DeleteArticleButton from "./DeleteArticleButton";
 export default async function AdminArticlesPage() {
   const articles = await prisma.article.findMany({
     orderBy: { createdAt: "desc" },
@@ -32,8 +32,8 @@ export default async function AdminArticlesPage() {
                 <td className="px-4 py-3 text-right">
                   <Link href={`/articles/${a.slug}`} className="text-amber-600 hover:underline mr-3">View</Link>
                   <Link href={`/admin/articles/${a.slug}/edit`} className="text-amber-600 hover:underline">Edit</Link>
-                </td>
-              </tr>
+                  <DeleteArticleButton slug={a.slug} title={a.title} />
+                </td>              </tr>
             ))}
           </tbody>
         </table>

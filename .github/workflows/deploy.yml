@@ -25,8 +25,10 @@ jobs:
             --exclude 'node_modules'
             --exclude '.next'
             --exclude '.env'
-            --exclude 'data/'
-            --exclude 'public/images/'
+            --exclude 'data'
+            --exclude 'data/**'
+            --exclude 'public/images'
+            --exclude 'public/images/**'
             --exclude 'prisma/dev.db'
             --exclude 'prisma/dev.db-journal'
             --exclude 'scripts/liteapks-urls.txt'
@@ -36,6 +38,22 @@ jobs:
           remote_host: ${{ secrets.SSH_HOST }}
           remote_user: ${{ secrets.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: Verify production database before deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            DB=/opt/apkbay/data/prod.db
+            if [ -f "$DB" ]; then
+              SIZE=$(stat -c%s "$DB")
+              echo "OK: prod.db exists (${SIZE} bytes) — deploy must preserve it"
+              echo "$SIZE" > /tmp/apkbay-pre-deploy-db-size
+            else
+              echo "WARN: no prod.db yet (first deploy)"
+            fi
 
       - name: Run deploy script
         uses: appleboy/ssh-action@v1.2.0
@@ -47,6 +65,30 @@ jobs:
             cd /opt/apkbay
             chmod +x deploy/scripts/*.sh
             DOMAIN="${{ secrets.DOMAIN }}" APP_PORT=8081 ./deploy/scripts/deploy.sh
+
+      - name: Verify production database after deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            DB=/opt/apkbay/data/prod.db
+            if [ ! -f "$DB" ]; then
+              echo "ERROR: prod.db missing after deploy"
+              exit 1
+            fi
+            SIZE=$(stat -c%s "$DB")
+            if [ -f /tmp/apkbay-pre-deploy-db-size ]; then
+              PRE=$(cat /tmp/apkbay-pre-deploy-db-size)
+              if [ "$SIZE" -lt "$PRE" ]; then
+                echo "ERROR: prod.db shrank from ${PRE} to ${SIZE} bytes — possible data loss"
+                exit 1
+              fi
+              echo "OK: prod.db preserved (${PRE} -> ${SIZE} bytes)"
+            else
+              echo "OK: prod.db present (${SIZE} bytes)"
+            fi
 
       - name: Health check (HTTPS)
         run: |
