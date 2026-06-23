@@ -89,7 +89,7 @@ export default function EntryForm({ categories, entry }: EntryFormProps) {
           throw new Error(errData.error || "Failed to update");
         }
         const updated = await res.json();
-        router.push(`/admin/entries/${updated.slug}/edit`);
+        router.push(`/twojastara/entries/${updated.slug}/edit`);
       } else {
         const res = await fetch("/api/entries", {
           method: "POST",
@@ -100,7 +100,7 @@ export default function EntryForm({ categories, entry }: EntryFormProps) {
           const errData = await res.json().catch(() => ({}));
           throw new Error(errData.error || "Failed to create");
         }
-        router.push("/admin/entries");
+        router.push("/twojastara/entries");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -281,7 +281,7 @@ export default function EntryForm({ categories, entry }: EntryFormProps) {
         <button type="submit" disabled={loading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50">
           {loading ? "Saving..." : entry ? "Update" : "Create"}
         </button>
-        <Link href="/admin/entries" className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg">Cancel</Link>
+        <Link href="/twojastara/entries" className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg">Cancel</Link>
       </div>
     </form>
   );

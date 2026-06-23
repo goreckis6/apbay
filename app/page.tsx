@@ -28,20 +28,21 @@ export default async function HomePage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
           <div className="flex-1 min-w-0">
-            {/* News */}
-            <section className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-slate-800">News</h2>
-                <Link href="/articles" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
-                  View More
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {articles.slice(0, 3).map((a) => (
-                  <ArticleCard key={a.id} slug={a.slug} title={a.title} excerpt={a.excerpt} type={a.type} image={a.image} publishedAt={a.publishedAt} />
-                ))}
-              </div>
-            </section>
+            {articles.length > 0 && (
+              <section className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-slate-800">News</h2>
+                  <Link href="/articles" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                    View More
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {articles.slice(0, 3).map((a) => (
+                    <ArticleCard key={a.id} slug={a.slug} title={a.title} excerpt={a.excerpt} type={a.type} image={a.image} publishedAt={a.publishedAt} />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Essential Apps */}
             <section className="mb-8">

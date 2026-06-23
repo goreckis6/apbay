@@ -42,19 +42,19 @@ export default async function AdminEntriesPage({
     <div suppressHydrationWarning>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-800">Games & Apps</h1>
-        <Link href="/admin/entries/new" className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium">
+        <Link href="/twojastara/entries/new" className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium">
           Add New
         </Link>
       </div>
 
       <div className="flex gap-2 mb-4">
-        <Link href={search?.trim() ? `/admin/entries?search=${encodeURIComponent(search.trim())}` : "/admin/entries"} className={`px-4 py-2 rounded-lg ${!type ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
+        <Link href={search?.trim() ? `/twojastara/entries?search=${encodeURIComponent(search.trim())}` : "/twojastara/entries"} className={`px-4 py-2 rounded-lg ${!type ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
           All
         </Link>
-        <Link href={search?.trim() ? `/admin/entries?type=game&search=${encodeURIComponent(search.trim())}` : "/admin/entries?type=game"} className={`px-4 py-2 rounded-lg ${type === "game" ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
+        <Link href={search?.trim() ? `/twojastara/entries?type=game&search=${encodeURIComponent(search.trim())}` : "/twojastara/entries?type=game"} className={`px-4 py-2 rounded-lg ${type === "game" ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
           Games
         </Link>
-        <Link href={search?.trim() ? `/admin/entries?type=app&search=${encodeURIComponent(search.trim())}` : "/admin/entries?type=app"} className={`px-4 py-2 rounded-lg ${type === "app" ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
+        <Link href={search?.trim() ? `/twojastara/entries?type=app&search=${encodeURIComponent(search.trim())}` : "/twojastara/entries?type=app"} className={`px-4 py-2 rounded-lg ${type === "app" ? "bg-amber-500 text-white" : "bg-white text-slate-600"}`}>
           Apps
         </Link>
       </div>
@@ -74,7 +74,7 @@ export default async function AdminEntriesPage({
           </button>
           {search?.trim() && (
             <Link
-              href={type ? `/admin/entries?type=${type}` : "/admin/entries"}
+              href={type ? `/twojastara/entries?type=${type}` : "/twojastara/entries"}
               className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium inline-flex items-center"
             >
               Clear
@@ -90,7 +90,7 @@ export default async function AdminEntriesPage({
           {search?.trim() ? "No entries match your search." : "No entries yet. Add your first game or app."}
         </p>
       )}
-      <Pagination totalCount={totalCount} currentPage={currentPage} perPage={PER_PAGE} basePath="/admin/entries" queryParams={queryParams} />
+      <Pagination totalCount={totalCount} currentPage={currentPage} perPage={PER_PAGE} basePath="/twojastara/entries" queryParams={queryParams} />
     </div>
   );
 }

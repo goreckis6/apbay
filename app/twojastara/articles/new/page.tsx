@@ -5,7 +5,7 @@ export default function NewArticlePage() {
   return (
     <div>
       <div className="mb-8">
-        <Link href="/admin/articles" className="text-amber-600 hover:underline">← Back</Link>
+        <Link href="/twojastara/articles" className="text-amber-600 hover:underline">← Back</Link>
         <h1 className="text-2xl font-bold text-slate-800 mt-2">Add New Article</h1>
       </div>
       <ArticleForm />

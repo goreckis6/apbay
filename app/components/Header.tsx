@@ -67,7 +67,6 @@ function HeaderContent({ logoUrl }: { logoUrl?: string | null }) {
             {navLink("/apps", "Apps")}
             {navLink("/games", "Games")}
             {navLink("/articles", "News")}
-            <Link href="/admin" className="text-slate-500 hover:text-[#EB144C] text-sm">Admin</Link>
           </nav>
 
           <div className="flex items-center">

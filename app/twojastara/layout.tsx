@@ -2,18 +2,19 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ADMIN_BASE, ADMIN_LOGIN } from "@/lib/adminPath";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname === "/admin/login") {
+  if (pathname === ADMIN_LOGIN) {
     return <>{children}</>;
   }
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin/login");
+    router.push(ADMIN_LOGIN);
     router.refresh();
   };
 
@@ -21,24 +22,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-slate-100">
       <aside className="fixed left-0 top-0 w-64 h-full bg-slate-900 text-white">
         <div className="p-6">
-          <Link href="/admin" className="text-xl font-bold">
+          <Link href={ADMIN_BASE} className="text-xl font-bold">
             Admin Panel
           </Link>
         </div>
         <nav className="mt-4">
-          <Link href="/admin" className="block px-6 py-3 hover:bg-slate-800">
+          <Link href={ADMIN_BASE} className="block px-6 py-3 hover:bg-slate-800">
             Dashboard
           </Link>
-          <Link href="/admin/entries" className="block px-6 py-3 hover:bg-slate-800">
+          <Link href={`${ADMIN_BASE}/entries`} className="block px-6 py-3 hover:bg-slate-800">
             Games & Apps
           </Link>
-          <Link href="/admin/articles" className="block px-6 py-3 hover:bg-slate-800">
+          <Link href={`${ADMIN_BASE}/articles`} className="block px-6 py-3 hover:bg-slate-800">
             Articles
           </Link>
-          <Link href="/admin/categories" className="block px-6 py-3 hover:bg-slate-800">
+          <Link href={`${ADMIN_BASE}/categories`} className="block px-6 py-3 hover:bg-slate-800">
             Categories
           </Link>
-          <Link href="/admin/files" className="block px-6 py-3 hover:bg-slate-800">
+          <Link href={`${ADMIN_BASE}/files`} className="block px-6 py-3 hover:bg-slate-800">
             Files
           </Link>
           <Link href="/" className="block px-6 py-3 hover:bg-slate-800 text-amber-400">

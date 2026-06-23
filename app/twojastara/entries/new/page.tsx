@@ -8,7 +8,7 @@ export default async function NewEntryPage() {
   return (
     <div>
       <div className="mb-8">
-        <Link href="/admin/entries" className="text-amber-600 hover:underline">← Back</Link>
+        <Link href="/twojastara/entries" className="text-amber-600 hover:underline">← Back</Link>
         <h1 className="text-2xl font-bold text-slate-800 mt-2">Add New Game or App</h1>
       </div>
       <EntryForm categories={categories} />

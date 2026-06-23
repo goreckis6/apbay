@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { ADMIN_BASE } from "@/lib/adminPath";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/admin";
+  const next = searchParams.get("next") || ADMIN_BASE;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

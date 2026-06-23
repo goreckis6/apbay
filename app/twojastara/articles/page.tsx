@@ -10,7 +10,7 @@ export default async function AdminArticlesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-800">Articles</h1>
-        <Link href="/admin/articles/new" className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium">
+        <Link href="/twojastara/articles/new" className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium">
           Add New
         </Link>
       </div>
@@ -31,7 +31,7 @@ export default async function AdminArticlesPage() {
                 <td className="px-4 py-3 capitalize">{a.type}</td>
                 <td className="px-4 py-3 text-right">
                   <Link href={`/articles/${a.slug}`} className="text-amber-600 hover:underline mr-3">View</Link>
-                  <Link href={`/admin/articles/${a.slug}/edit`} className="text-amber-600 hover:underline">Edit</Link>
+                  <Link href={`/twojastara/articles/${a.slug}/edit`} className="text-amber-600 hover:underline">Edit</Link>
                   <DeleteArticleButton slug={a.slug} title={a.title} />
                 </td>              </tr>
             ))}

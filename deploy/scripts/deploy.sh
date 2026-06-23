@@ -43,6 +43,7 @@ fi
 
 cat > .env <<EOF
 DATABASE_URL=file:/app/data/prod.db
+SITE_URL=https://${DOMAIN}
 NEXT_PUBLIC_SITE_URL=https://${DOMAIN}
 NODE_ENV=production
 APP_PORT=${APP_PORT}

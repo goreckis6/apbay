@@ -376,7 +376,7 @@ export default function EntryListWithGenerate({ entries }: EntryListWithGenerate
                   <Link href={`/${e.type}s/${e.slug}`} className="text-amber-600 hover:underline mr-3">
                     View
                   </Link>
-                  <Link href={`/admin/entries/${e.slug}/edit`} className="text-amber-600 hover:underline">
+                  <Link href={`/twojastara/entries/${e.slug}/edit`} className="text-amber-600 hover:underline">
                     Edit
                   </Link>
                   <DeleteEntryButton slug={e.slug} title={e.title} />

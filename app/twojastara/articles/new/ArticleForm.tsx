@@ -47,7 +47,7 @@ export default function ArticleForm({ article }: ArticleFormProps) {
           body: JSON.stringify(data),
         });
       }
-      router.push("/admin/articles");
+      router.push("/twojastara/articles");
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function ArticleForm({ article }: ArticleFormProps) {
         <button type="submit" disabled={loading} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg disabled:opacity-50">
           {loading ? "Saving..." : article ? "Update" : "Create"}
         </button>
-        <Link href="/admin/articles" className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg">Cancel</Link>
+        <Link href="/twojastara/articles" className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg">Cancel</Link>
       </div>
     </form>
   );
