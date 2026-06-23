@@ -42,10 +42,15 @@ export DOMAIN APP_PORT YTDOWN_DIR
 
 echo "==> Building Docker image"
 docker compose build --pull
+docker build -t apkbay-builder --target builder .
 
 echo "==> Running database migrations"
-docker compose run --rm --no-deps apkbay-web \
-  sh -c 'node node_modules/prisma/build/index.js migrate deploy'
+mkdir -p data
+docker run --rm \
+  -v "$(pwd)/data:/app/data" \
+  -e DATABASE_URL="file:/app/data/prod.db" \
+  apkbay-builder \
+  sh -c 'npx prisma migrate deploy'
 
 echo "==> Starting containers"
 docker compose up -d --remove-orphans
