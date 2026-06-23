@@ -111,13 +111,15 @@ export default function FilesManager({ initialFiles, initialLogoUrl }: FilesMana
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-bold text-slate-800">Files</h2>
-            <p className="text-sm text-slate-500">Upload .txt, .js, .css, .json, .xml, .html and other static files.</p>
+            <p className="text-sm text-slate-500">
+              Upload verification files (Yandex, Bing, Google) and other static files: .html, .xml, .txt, .json…
+            </p>
           </div>
           <div>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".txt,.js,.css,.json,.xml,.html,.htm,.svg,.webp,.png,.jpg,.jpeg,.gif,.ico,.woff,.woff2,.map,.md"
+              accept=".html,.htm,.HTML,.HTM,.txt,.xml,.json,.js,.css,.svg,.webp,.png,.jpg,.jpeg,.gif,.ico,.woff,.woff2,.map,.md"
               className="hidden"
               onChange={handleFileUpload}
             />

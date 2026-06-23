@@ -5,10 +5,10 @@ const UPLOADED_FILE_EXTENSIONS = [
   "png", "jpg", "jpeg", "gif", "ico", "woff", "woff2", "map", "md",
 ];
 
-const uploadedFileRewrites = UPLOADED_FILE_EXTENSIONS.map((ext) => ({
-  source: `/:name([\\w.\\-+@]+\\.${ext})`,
-  destination: "/files/:name",
-}));
+const uploadedFileRewrites = UPLOADED_FILE_EXTENSIONS.flatMap((ext) => [
+  { source: `/:name([\\w.\\-+@=]+\\.${ext})`, destination: "/files/:name" },
+  { source: `/:name([\\w.\\-+@=]+\\.${ext.toUpperCase()})`, destination: "/files/:name" },
+]);
 
 const nextConfig: NextConfig = {
   output: "standalone",

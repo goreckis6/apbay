@@ -32,10 +32,20 @@ const MAX_LOGO_BYTES = 2 * 1024 * 1024;
 
 export function sanitizeFilename(name: string): string | null {
   const base = name.replace(/\\/g, "/").split("/").pop()?.trim() || "";
-  if (!base || base.includes("..") || !/^[\w.\-()+@]+$/.test(base)) return null;
+  if (!base || base.includes("..")) return null;
+
+  const isVerificationFile =
+    /^(yandex_|google|googlesite|BingSiteAuth)/i.test(base) ||
+    /^google[a-z0-9]+\.html?$/i.test(base);
+
+  const allowedChars = isVerificationFile ? /^[\w.\-()+@=]+$/i : /^[\w.\-()+@]+$/;
+  if (!allowedChars.test(base)) return null;
+
   const ext = base.includes(".") ? `.${base.split(".").pop()!.toLowerCase()}` : "";
   if (!ext) return null;
-  return base;
+
+  const stem = base.slice(0, base.length - ext.length);
+  return `${stem}${ext}`;
 }
 
 export async function ensureUploadDirs(): Promise<void> {
