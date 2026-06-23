@@ -19,7 +19,7 @@ if grep -qF "$MARKER" "$YTDOWN_CADDY"; then
 else
   echo "" >> "$YTDOWN_CADDY"
   echo "$MARKER" >> "$YTDOWN_CADDY"
-  DOMAIN="$DOMAIN" APP_PORT="$APP_PORT" envsubst '$DOMAIN $APP_PORT' < "$SNIPPET" >> "$YTDOWN_CADDY"
+  sed "s/__DOMAIN__/${DOMAIN}/g; s/__APP_PORT__/${APP_PORT}/g" "$SNIPPET" >> "$YTDOWN_CADDY"
   echo "Caddy: appended $DOMAIN → 127.0.0.1:$APP_PORT to $YTDOWN_CADDY"
 fi
 
