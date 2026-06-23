@@ -31,7 +31,32 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.*
+!.env.example
+
+# production data (SQLite DB on server)
+/data/
+
+# local scrape URL lists (large, not needed in repo)
+scripts/liteapks-urls.txt
+scripts/modyolo-urls.txt
+
+# scraped images (long paths on Windows; persisted on VPS via docker bind mount)
+public/images/
+
+# local SQLite database
+prisma/dev.db
+prisma/dev.db-journal
+
+# scrape artifacts / binaries
+scripts/downloaded_apks/
+scripts/*.csv
+scripts/*.xlsx
+scripts/*.xml
+scripts/debug-page.html
+scripts/download-test-output.txt
+scripts/links.txt
 
 # vercel
 .vercel
@@ -39,3 +64,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/generated/prisma

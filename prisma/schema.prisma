@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  type      String   // "game" | "app"
+  entries   Entry[]
+}
+
+model Entry {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  type          String   // "game" | "app"
+  tagline       String?
+  description   String?
+  content       String?
+  publisher     String?
+  size          String?
+  version       String?
+  modInfo       String?
+  bannerImage   String?
+  iconImage     String?
+  screenshots   String?  // JSON array of URLs
+  heroTitle     String?  // Banner overlay text (e.g., "FREE WIFI")
+  heroSubtitle  String?  // Banner subtitle (e.g., "DATA SAVER BROWSER")
+  screenshotImage String? // Phone/screenshot on banner right
+  modFeatures   String?  // Newline-separated MOD features for bullet list
+  downloadNotes String? // Notes for download section
+  downloadUrl   String? // Main download URL (APK/xapk file or external link)
+  downloadVersions String? // JSON: [{version, size, url}] for multiple APK versions
+  contentBlocks String? // JSON: [{type:"text"|"image"|"two-columns", content?, image?, left?, right?}]
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  publishedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String?
+  content     String?
+  image       String?
+  type        String   // "article" | "news"
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

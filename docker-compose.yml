@@ -1,0 +1,19 @@
+# APKBAY — Next.js on localhost only. HTTPS via shared ytdown Caddy (:80/:443).
+services:
+  apkbay-web:
+    build: .
+    image: apkbay-web
+    container_name: apkbay-web
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:${APP_PORT:-8081}:3000"
+    volumes:
+      - ./data:/app/data
+      - ./public/images:/app/public/images
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

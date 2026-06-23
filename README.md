@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# APKBAY
+
+A website for free MOD APK games and premium apps for Android. Built with Next.js 16, Prisma, SQLite, and Tailwind CSS.
+
+## Features
+
+- **Homepage** - News, Essential Apps, Editor's Choice, Games Mod - Latest, Premium Apps - Latest
+- **Games & Apps** - Browse by category with detail pages, category sidebar
+- **News** - Articles and news
+- **Admin Panel** - Full CRUD for games, apps, articles, and categories
+- **Responsive** - Mobile-friendly design
+
+## Tech Stack
+
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **Prisma** + SQLite
+- **Tailwind CSS**
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Setup database (already done if you ran seed)
+
+```bash
+npx prisma migrate dev
+npm run db:seed
+```
+
+### 3. Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Admin Panel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Go to [http://localhost:3000/admin](http://localhost:3000/admin) to manage content.
 
-## Learn More
+**Note:** The admin panel has no authentication. For production, add auth and protect `/admin/*` routes.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/
+├── admin/           # Admin panel
+│   ├── entries/     # Games & Apps CRUD
+│   ├── articles/    # Articles CRUD
+│   └── categories/  # Categories
+├── api/             # API routes
+├── games/           # Games listing & detail
+├── apps/            # Apps listing & detail
+├── articles/        # Changelog
+└── components/      # Layout components
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database Schema
 
-## Deploy on Vercel
+- **Entry** - Games and apps (slug, title, type, version, size, modInfo, etc.)
+- **Category** - Genres for games/apps (Action, Arcade, etc.)
+- **Article** - Articles and news for the changelog
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Adding New Content
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Go to admin panel
+2. Add categories first (Games > Action, Apps > Social, etc.)
+3. Add games and apps with all metadata
+4. Add articles for the changelog
+
+Use image URLs for banners and icons (e.g., placeholder.com or your CDN).
+
+## Production deploy (VPS z ytdown)
+
+Ten projekt jest przygotowany do współdzielenia VPS z **ytdown** (`/opt/ytdown`, Caddy na `:80`/`:443`).
+
+| Co | Wartość |
+|---|---|
+| Katalog na VPS | `/opt/apkbay` |
+| Port aplikacji | `127.0.0.1:8081` → kontener `:3000` |
+| Domena | `aphbay.com` (secret `DOMAIN` w GitHub) |
+| HTTPS | Wspólny Caddy ytdown (`site-caddy`) |
+| Baza | SQLite: `/opt/apkbay/data/prod.db` |
+| Autostart | `systemd` → `apkbay.service` |
+| Workflow | `.github/workflows/deploy.yml` |
+
+### Architektura (bez konfliktu portów)
+
+```
+Internet → :80/:443 → Caddy (ytdown, site-caddy)
+                          ├── yts.cool      → 127.0.0.1:8080  (ytdown)
+                          └── aphbay.com    → 127.0.0.1:8081  (ten projekt)
+```
+
+APKBAY **nie** uruchamia własnego Caddy — `deploy/scripts/merge-caddy.sh` dopisuje blok domeny do `/opt/ytdown/deploy/caddy/Caddyfile`.
+
+### Pierwsze wdrożenie na serwerze
+
+1. Sklonuj/rsync repo do `/opt/apkbay`
+2. Jednorazowo (root): `sudo bash deploy/scripts/server-setup.sh`
+3. Opcjonalnie sekrety Ollama: `/opt/apkbay/data/.env.secrets`
+4. Deploy: push na `main` albo ręcznie `DOMAIN=aphbay.com ./deploy/scripts/deploy.sh`
+
+### GitHub Actions — secrets
+
+| Secret | Przykład |
+|---|---|
+| `SSH_HOST` | `167.233.112.233` |
+| `SSH_USER` | użytkownik SSH |
+| `SSH_KEY` | klucz prywatny |
+| `DOMAIN` | `aphbay.com` |
+
+### Czego nie robić (ochrona ytdown)
+
+- Nie kasuj `/opt/ytdown/backend/data/`
+- Nie uruchamiaj `docker compose down -v` w ytdown
+- Nie binduj APKBAY na `:8080`, `:80` ani `:443`
+- rsync APKBAY idzie tylko do `/opt/apkbay/`

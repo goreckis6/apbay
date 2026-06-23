@@ -1,0 +1,12 @@
+# apkbay.com — reverse proxy block (managed by apkbay deploy)
+# Merged into /opt/ytdown/deploy/caddy/Caddyfile — do not run a second Caddy on :80/:443
+{$DOMAIN} {
+	encode gzip zstd
+
+	reverse_proxy 127.0.0.1:{$APP_PORT} {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}

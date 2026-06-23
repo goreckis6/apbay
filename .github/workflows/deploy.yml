@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-apkbay
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rsync to VPS
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: >-
+            -avzr --delete
+            --exclude '.git'
+            --exclude 'node_modules'
+            --exclude '.next'
+            --exclude '.env'
+            --exclude 'data/'
+            --exclude 'prisma/dev.db'
+            --exclude 'prisma/dev.db-journal'
+            --exclude 'scripts/liteapks-urls.txt'
+            --exclude 'scripts/modyolo-urls.txt'
+          path: ./
+          remote_path: /opt/apkbay/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: Run deploy script
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/apkbay
+            chmod +x deploy/scripts/*.sh
+            DOMAIN="${{ secrets.DOMAIN }}" APP_PORT=8081 ./deploy/scripts/deploy.sh
+
+      - name: Health check (HTTPS)
+        run: |
+          sleep 8
+          curl -fsS "https://${{ secrets.DOMAIN }}/" -o /dev/null
+          echo "OK: https://${{ secrets.DOMAIN }}/"

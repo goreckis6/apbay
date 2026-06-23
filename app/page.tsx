@@ -1,65 +1,158 @@
-import Image from "next/image";
+import Link from "next/link";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import EntryCard from "./components/EntryCard";
+import ArticleCard from "./components/ArticleCard";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function HomePage() {
+  const [games, apps, articles, categories] = await Promise.all([
+    prisma.entry.findMany({ where: { type: "game" }, include: { category: true }, orderBy: { publishedAt: "desc" }, take: 12 }),
+    prisma.entry.findMany({ where: { type: "app" }, include: { category: true }, orderBy: { publishedAt: "desc" }, take: 12 }),
+    prisma.article.findMany({ orderBy: { publishedAt: "desc" }, take: 6 }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+  ]);
+
+  const gameCategories = categories.filter((c) => c.type === "game");
+  const appCategories = categories.filter((c) => c.type === "app");
+
+  const essentialApps = apps.slice(0, 6);
+  const editorChoice = [...games.slice(0, 3), ...apps.slice(6, 9)].slice(0, 6);
+  const gamesLatest = games.slice(0, 6);
+  const appsLatest = apps.slice(0, 6);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    <div className="min-h-screen flex flex-col bg-slate-100">
+      <Header />
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            {/* News */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-800">News</h2>
+                <Link href="/articles" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {articles.slice(0, 3).map((a) => (
+                  <ArticleCard key={a.id} slug={a.slug} title={a.title} excerpt={a.excerpt} type={a.type} image={a.image} publishedAt={a.publishedAt} />
+                ))}
+              </div>
+            </section>
+
+            {/* Essential Apps */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-800">Essential Apps</h2>
+                <Link href="/apps" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {essentialApps.map((a) => (
+                  <EntryCard key={a.id} slug={a.slug} title={a.title} type="app" version={a.version} size={a.size} modInfo={a.modInfo} iconImage={a.iconImage} />
+                ))}
+              </div>
+              {essentialApps.length === 0 && (
+                <p className="text-slate-500 text-sm py-4">No apps yet. Add some from the admin panel.</p>
+              )}
+            </section>
+
+            {/* Editor's Choice */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-800">Editor&apos;s Choice</h2>
+                <Link href="/games" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {editorChoice.map((e) => (
+                  <EntryCard key={e.id} slug={e.slug} title={e.title} type={e.type as "game" | "app"} version={e.version} size={e.size} modInfo={e.modInfo} iconImage={e.iconImage} />
+                ))}
+              </div>
+              {editorChoice.length === 0 && (
+                <p className="text-slate-500 text-sm py-4">No entries yet.</p>
+              )}
+            </section>
+
+            {/* Games Mod - Latest */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-800">Games Mod - Latest</h2>
+                <Link href="/games" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {gamesLatest.map((g) => (
+                  <EntryCard key={g.id} slug={g.slug} title={g.title} type="game" version={g.version} size={g.size} modInfo={g.modInfo} iconImage={g.iconImage} />
+                ))}
+              </div>
+            </section>
+
+            {/* Premium Apps - Latest */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-800">Premium Apps - Latest</h2>
+                <Link href="/apps" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {appsLatest.map((a) => (
+                  <EntryCard key={a.id} slug={a.slug} title={a.title} type="app" version={a.version} size={a.size} modInfo={a.modInfo} iconImage={a.iconImage} />
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="lg:w-72 flex-shrink-0">
+            <div className="sticky top-24 space-y-6">
+              {/* Games categories */}
+              <section className="bg-white rounded-lg border border-slate-200 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-slate-800">Games</h2>
+                  <Link href="/games" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                    View More
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameCategories.map((c) => (
+                    <Link key={c.id} href={`/games?category=${c.slug}`} className="text-sm text-blue-600 hover:text-[#EB144C] hover:underline">
+                      {c.name}
+                    </Link>
+                  ))}
+                </div>
+                {gameCategories.length === 0 && <p className="text-slate-500 text-sm">No categories</p>}
+              </section>
+
+              {/* Apps categories */}
+              <section className="bg-white rounded-lg border border-slate-200 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-slate-800">Apps</h2>
+                  <Link href="/apps" className="px-3 py-1.5 text-white text-sm font-medium rounded transition hover:opacity-90" style={{ backgroundColor: "#EB144C" }}>
+                    View More
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {appCategories.map((c) => (
+                    <Link key={c.id} href={`/apps?category=${c.slug}`} className="text-sm text-blue-600 hover:text-[#EB144C] hover:underline">
+                      {c.name}
+                    </Link>
+                  ))}
+                </div>
+                {appCategories.length === 0 && <p className="text-slate-500 text-sm">No categories</p>}
+              </section>
+            </div>
+          </aside>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
