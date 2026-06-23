@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-/opt/apkbay}"
-DOMAIN="${DOMAIN:-aphbay.com}"
+DOMAIN="${DOMAIN:-apkbay.com}"
 APP_PORT="${APP_PORT:-8081}"
 YTDOWN_DIR="${YTDOWN_DIR:-/opt/ytdown}"
 
@@ -10,7 +10,6 @@ cd "$APP_DIR"
 
 echo "==> APKBAY deploy in $APP_DIR (domain: $DOMAIN, port: $APP_PORT)"
 
-# Preserve secrets from existing .env
 OLLAMA_API_KEY=""
 OLLAMA_MODEL=""
 if [[ -f .env ]]; then

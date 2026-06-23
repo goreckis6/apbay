@@ -2,7 +2,7 @@
 # Adds APKBAY domain block to the shared ytdown Caddyfile (one-time / idempotent).
 set -euo pipefail
 
-DOMAIN="${DOMAIN:-aphbay.com}"
+DOMAIN="${DOMAIN:-apkbay.com}"
 APP_PORT="${APP_PORT:-8081}"
 YTDOWN_DIR="${YTDOWN_DIR:-/opt/ytdown}"
 YTDOWN_CADDY="${YTDOWN_DIR}/deploy/caddy/Caddyfile"

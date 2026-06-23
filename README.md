@@ -84,7 +84,7 @@ Ten projekt jest przygotowany do współdzielenia VPS z **ytdown** (`/opt/ytdown
 |---|---|
 | Katalog na VPS | `/opt/apkbay` |
 | Port aplikacji | `127.0.0.1:8081` → kontener `:3000` |
-| Domena | `aphbay.com` (secret `DOMAIN` w GitHub) |
+| Domena | `apkbay.com` (secret `DOMAIN` w GitHub) |
 | HTTPS | Wspólny Caddy ytdown (`site-caddy`) |
 | Baza | SQLite: `/opt/apkbay/data/prod.db` |
 | Autostart | `systemd` → `apkbay.service` |
@@ -95,7 +95,7 @@ Ten projekt jest przygotowany do współdzielenia VPS z **ytdown** (`/opt/ytdown
 ```
 Internet → :80/:443 → Caddy (ytdown, site-caddy)
                           ├── yts.cool      → 127.0.0.1:8080  (ytdown)
-                          └── aphbay.com    → 127.0.0.1:8081  (ten projekt)
+                          └── apkbay.com    → 127.0.0.1:8081  (ten projekt)
 ```
 
 APKBAY **nie** uruchamia własnego Caddy — `deploy/scripts/merge-caddy.sh` dopisuje blok domeny do `/opt/ytdown/deploy/caddy/Caddyfile`.
@@ -105,7 +105,7 @@ APKBAY **nie** uruchamia własnego Caddy — `deploy/scripts/merge-caddy.sh` dop
 1. Sklonuj/rsync repo do `/opt/apkbay`
 2. Jednorazowo (root): `sudo bash deploy/scripts/server-setup.sh`
 3. Opcjonalnie sekrety Ollama: `/opt/apkbay/data/.env.secrets`
-4. Deploy: push na `main` albo ręcznie `DOMAIN=aphbay.com ./deploy/scripts/deploy.sh`
+4. Deploy: push na `main` albo ręcznie `DOMAIN=apkbay.com ./deploy/scripts/deploy.sh`
 
 ### GitHub Actions — secrets
 
@@ -114,7 +114,7 @@ APKBAY **nie** uruchamia własnego Caddy — `deploy/scripts/merge-caddy.sh` dop
 | `SSH_HOST` | `167.233.112.233` |
 | `SSH_USER` | użytkownik SSH |
 | `SSH_KEY` | klucz prywatny |
-| `DOMAIN` | `aphbay.com` |
+| `DOMAIN` | `apkbay.com` |
 
 ### Czego nie robić (ochrona ytdown)
 
