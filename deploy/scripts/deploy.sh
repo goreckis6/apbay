@@ -89,7 +89,8 @@ fi
 
 if [[ "$NEED_BUILD" == "1" ]]; then
   docker image prune -f >/dev/null 2>&1 || true
-  export DOCKER_BUILDKIT=1
+  # VPS has no docker buildx — legacy builder only
+  export DOCKER_BUILDKIT=0
   echo "==> Building Docker image (public/images excluded via .dockerignore)"
   docker build -t apkbay-web --target runner .
   echo "$CURRENT_HASH" > data/.deploy-hash
@@ -100,6 +101,7 @@ if [[ "${RUN_MIGRATIONS:-0}" == "1" ]]; then
   if [[ -f data/prod.db ]]; then
     cp -a data/prod.db "data/prod.db.bak.$(date +%Y%m%d%H%M%S)"
   fi
+  export DOCKER_BUILDKIT=0
   docker build -t apkbay-builder --target builder .
   docker run --rm \
     -v "$(pwd)/data:/app/data" \
