@@ -50,7 +50,7 @@ export async function listUploadedFiles(): Promise<{ name: string; size: number;
     names.map(async (name) => {
       const info = await stat(join(FILES_DIR, name));
       if (!info.isFile()) return null;
-      return { name, size: info.size, url: `/files/${encodeURIComponent(name)}` };
+      return { name, size: info.size, url: `/${encodeURIComponent(name)}` };
     })
   );
   return files.filter(Boolean) as { name: string; size: number; url: string }[];
@@ -74,7 +74,7 @@ export async function saveUploadedFile(filename: string, data: Buffer): Promise<
   const err = validateUploadFile(safe, data.length, false);
   if (err) throw new Error(err);
   await writeFile(join(FILES_DIR, safe), data);
-  return `/files/${safe}`;
+  return `/${safe}`;
 }
 
 export async function saveLogoFile(filename: string, data: Buffer): Promise<string> {
