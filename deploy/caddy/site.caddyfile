@@ -1,5 +1,11 @@
 # apkbay.com — reverse proxy block (managed by apkbay deploy)
 __DOMAIN__ {
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+
 	encode gzip zstd
 
 	reverse_proxy 127.0.0.1:__APP_PORT__ {

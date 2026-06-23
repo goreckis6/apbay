@@ -21,12 +21,11 @@ else
   echo "$MARKER" >> "$YTDOWN_CADDY"
   sed "s/__DOMAIN__/${DOMAIN}/g; s/__APP_PORT__/${APP_PORT}/g" "$SNIPPET" >> "$YTDOWN_CADDY"
   echo "Caddy: appended $DOMAIN → 127.0.0.1:$APP_PORT to $YTDOWN_CADDY"
+  docker compose -f "${YTDOWN_DIR}/docker-compose.yml" restart caddy 2>/dev/null || \
+    docker restart site-caddy
+  echo "Caddy: restarted site-caddy (required for new TLS certificate)"
 fi
 
-if docker ps --format '{{.Names}}' | grep -qx 'site-caddy'; then
-  docker exec site-caddy caddy reload --config /etc/caddy/Caddyfile || \
-    docker compose -f "${YTDOWN_DIR}/docker-compose.yml" restart site-caddy
-  echo "Caddy: reloaded site-caddy"
-else
+if ! docker ps --format '{{.Names}}' | grep -qx 'site-caddy'; then
   echo "WARN: site-caddy container not running — start ytdown first, then re-run this script."
 fi
