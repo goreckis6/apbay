@@ -31,10 +31,9 @@ mkdir -p data public/images public/files public/logo
 chown -R 1001:1001 data public/files public/logo 2>/dev/null || true
 
 if [[ -f data/prod.db ]]; then
-  cp -a data/prod.db "data/prod.db.bak.$(date +%Y%m%d%H%M%S)"
-  echo "==> Database backup created — prod.db will NOT be deleted or replaced"
+  echo "==> prod.db present — skipping database changes (set RUN_MIGRATIONS=1 to migrate)"
 else
-  echo "==> No prod.db yet — migrations will create an empty database"
+  echo "==> No prod.db — run once with RUN_MIGRATIONS=1 to initialize schema"
 fi
 
 cat > .env <<EOF
@@ -64,20 +63,29 @@ fi
 
 export DOMAIN APP_PORT YTDOWN_DIR
 
-echo "==> Building Docker image"
-docker compose build --pull
-docker build -t apkbay-builder --target builder .
+echo "==> Freeing Docker disk space (dangling images)"
+docker image prune -f >/dev/null 2>&1 || true
 
-echo "==> Running database migrations"
-mkdir -p data
-docker run --rm \
-  -v "$(pwd)/data:/app/data" \
-  -e DATABASE_URL="file:/app/data/prod.db" \
-  apkbay-builder \
-  sh -c 'npx prisma migrate deploy'
+echo "==> Building Docker image (public/images excluded via .dockerignore)"
+docker build --pull -t apkbay-web --target runner .
+
+if [[ "${RUN_MIGRATIONS:-0}" == "1" ]]; then
+  echo "==> RUN_MIGRATIONS=1 — backing up prod.db and applying Prisma migrations"
+  if [[ -f data/prod.db ]]; then
+    cp -a data/prod.db "data/prod.db.bak.$(date +%Y%m%d%H%M%S)"
+  fi
+  docker build -t apkbay-builder --target builder .
+  docker run --rm \
+    -v "$(pwd)/data:/app/data" \
+    -e DATABASE_URL="file:/app/data/prod.db" \
+    apkbay-builder \
+    sh -c 'npx prisma migrate deploy'
+else
+  echo "==> Skipping database migrations (prod.db unchanged)"
+fi
 
 echo "==> Starting containers"
-docker compose up -d --remove-orphans
+docker compose up -d --remove-orphans --no-build
 
 echo "==> Merging Caddy config into ytdown (shared :80/:443)"
 bash deploy/scripts/merge-caddy.sh
