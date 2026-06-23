@@ -10,6 +10,11 @@ cd "$APP_DIR"
 
 echo "==> APKBAY deploy in $APP_DIR (domain: $DOMAIN, port: $APP_PORT)"
 
+compute_deploy_hash() {
+  find app lib prisma middleware.ts next.config.ts package.json package-lock.json Dockerfile .dockerignore \
+    -type f 2>/dev/null | sort | xargs sha256sum 2>/dev/null | sha256sum | cut -d' ' -f1
+}
+
 OLLAMA_API_KEY=""
 OLLAMA_MODEL=""
 ADMIN_USERNAME=""
@@ -31,7 +36,7 @@ mkdir -p data public/images public/files public/logo
 chown -R 1001:1001 data public/files public/logo 2>/dev/null || true
 
 if [[ -f data/prod.db ]]; then
-  echo "==> prod.db present — skipping database changes (set RUN_MIGRATIONS=1 to migrate)"
+  echo "==> prod.db present — database untouched (RUN_MIGRATIONS=1 only when schema changes)"
 else
   echo "==> No prod.db — run once with RUN_MIGRATIONS=1 to initialize schema"
 fi
@@ -63,11 +68,31 @@ fi
 
 export DOMAIN APP_PORT YTDOWN_DIR
 
-echo "==> Freeing Docker disk space (dangling images)"
-docker image prune -f >/dev/null 2>&1 || true
+CURRENT_HASH=$(compute_deploy_hash)
+STORED_HASH=""
+[[ -f data/.deploy-hash ]] && STORED_HASH=$(cat data/.deploy-hash)
 
-echo "==> Building Docker image (public/images excluded via .dockerignore)"
-docker build --pull -t apkbay-web --target runner .
+NEED_BUILD=0
+if [[ "${FORCE_REBUILD:-0}" == "1" ]]; then
+  echo "==> FORCE_REBUILD=1"
+  NEED_BUILD=1
+elif [[ "$CURRENT_HASH" != "$STORED_HASH" ]]; then
+  echo "==> App code changed (hash ${CURRENT_HASH:0:12}…)"
+  NEED_BUILD=1
+elif ! docker image inspect apkbay-web:latest >/dev/null 2>&1; then
+  echo "==> Docker image missing"
+  NEED_BUILD=1
+else
+  echo "==> No app code changes — skipping Docker build"
+fi
+
+if [[ "$NEED_BUILD" == "1" ]]; then
+  docker image prune -f >/dev/null 2>&1 || true
+  export DOCKER_BUILDKIT=1
+  echo "==> Building Docker image (public/images excluded via .dockerignore)"
+  docker build -t apkbay-web --target runner .
+  echo "$CURRENT_HASH" > data/.deploy-hash
+fi
 
 if [[ "${RUN_MIGRATIONS:-0}" == "1" ]]; then
   echo "==> RUN_MIGRATIONS=1 — backing up prod.db and applying Prisma migrations"
@@ -80,15 +105,17 @@ if [[ "${RUN_MIGRATIONS:-0}" == "1" ]]; then
     -e DATABASE_URL="file:/app/data/prod.db" \
     apkbay-builder \
     sh -c 'npx prisma migrate deploy'
-else
-  echo "==> Skipping database migrations (prod.db unchanged)"
 fi
 
 echo "==> Starting containers"
 docker compose up -d --remove-orphans --no-build
 
-echo "==> Merging Caddy config into ytdown (shared :80/:443)"
-bash deploy/scripts/merge-caddy.sh
+if ! grep -qF "# apkbay.com — managed by apkbay deploy" "${YTDOWN_DIR}/deploy/caddy/Caddyfile" 2>/dev/null; then
+  echo "==> Merging Caddy config into ytdown (one-time)"
+  bash deploy/scripts/merge-caddy.sh
+else
+  echo "==> Caddy config already merged — skipping"
+fi
 
 echo "==> Local health check"
 for i in $(seq 1 30); do

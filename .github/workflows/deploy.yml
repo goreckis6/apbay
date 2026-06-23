@@ -4,6 +4,11 @@ on:
   push:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: Force full Docker rebuild
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy-apkbay
@@ -68,7 +73,7 @@ jobs:
           script: |
             cd /opt/apkbay
             chmod +x deploy/scripts/*.sh
-            DOMAIN="${{ secrets.DOMAIN }}" APP_PORT=8081 ./deploy/scripts/deploy.sh
+            DOMAIN="${{ secrets.DOMAIN }}" APP_PORT=8081 FORCE_REBUILD=${{ inputs.force_rebuild == true && '1' || '0' }} ./deploy/scripts/deploy.sh
 
       - name: Verify production database after deploy
         uses: appleboy/ssh-action@v1.2.0
