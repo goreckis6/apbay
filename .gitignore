@@ -46,6 +46,12 @@ scripts/modyolo-urls.txt
 # scraped images (long paths on Windows; persisted on VPS via docker bind mount)
 public/images/
 
+# admin uploads (persisted on VPS)
+public/files/*
+!public/files/.gitkeep
+public/logo/*
+!public/logo/.gitkeep
+
 # local SQLite database
 prisma/dev.db
 prisma/dev.db-journal

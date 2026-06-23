@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Header from "./components/Header";
+import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import EntryCard from "./components/EntryCard";
 import ArticleCard from "./components/ArticleCard";
@@ -23,7 +23,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}

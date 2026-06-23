@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Header from "@/app/components/Header";
+import SiteHeader from "@/app/components/SiteHeader";
 import Footer from "@/app/components/Footer";
 import { prisma } from "@/lib/prisma";
 
@@ -41,7 +41,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <nav className="text-sm text-slate-600 mb-6">
           <Link href="/" className="hover:text-red-600">Home</Link>

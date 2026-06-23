@@ -1,4 +1,4 @@
-import Header from "@/app/components/Header";
+import SiteHeader from "@/app/components/SiteHeader";
 import Footer from "@/app/components/Footer";
 import ArticleCard from "@/app/components/ArticleCard";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +15,7 @@ export default async function ArticlesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-slate-800 mb-8">News</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

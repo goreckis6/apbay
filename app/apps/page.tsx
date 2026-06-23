@@ -1,4 +1,4 @@
-import Header from "@/app/components/Header";
+import SiteHeader from "@/app/components/SiteHeader";
 import Footer from "@/app/components/Footer";
 import EntryCard from "@/app/components/EntryCard";
 import Pagination from "@/app/components/Pagination";
@@ -41,7 +41,7 @@ export default async function AppsPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1 min-w-0">

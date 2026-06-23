@@ -12,17 +12,23 @@ echo "==> APKBAY deploy in $APP_DIR (domain: $DOMAIN, port: $APP_PORT)"
 
 OLLAMA_API_KEY=""
 OLLAMA_MODEL=""
+ADMIN_USERNAME=""
+ADMIN_PASSWORD=""
+ADMIN_SESSION_SECRET=""
 if [[ -f .env ]]; then
   OLLAMA_API_KEY="$(grep -E '^OLLAMA_API_KEY=' .env | cut -d= -f2- || true)"
   OLLAMA_MODEL="$(grep -E '^OLLAMA_MODEL=' .env | cut -d= -f2- || true)"
+  ADMIN_USERNAME="$(grep -E '^ADMIN_USERNAME=' .env | cut -d= -f2- || true)"
+  ADMIN_PASSWORD="$(grep -E '^ADMIN_PASSWORD=' .env | cut -d= -f2- || true)"
+  ADMIN_SESSION_SECRET="$(grep -E '^ADMIN_SESSION_SECRET=' .env | cut -d= -f2- || true)"
 fi
 if [[ -f data/.env.secrets ]]; then
   # shellcheck disable=SC1091
   source data/.env.secrets
 fi
 
-mkdir -p data public/images
-chown -R 1001:1001 data 2>/dev/null || true
+mkdir -p data public/images public/files public/logo
+chown -R 1001:1001 data public/files public/logo 2>/dev/null || true
 
 if [[ -f data/prod.db ]]; then
   cp -a data/prod.db "data/prod.db.bak.$(date +%Y%m%d%H%M%S)"
@@ -36,7 +42,18 @@ DATABASE_URL=file:/app/data/prod.db
 NEXT_PUBLIC_SITE_URL=https://${DOMAIN}
 NODE_ENV=production
 APP_PORT=${APP_PORT}
+ADMIN_USERNAME=${ADMIN_USERNAME:-admin456}
 EOF
+
+if [[ -n "${ADMIN_PASSWORD:-}" ]]; then
+  echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> .env
+else
+  echo 'ADMIN_PASSWORD=Test456#' >> .env
+fi
+
+if [[ -n "${ADMIN_SESSION_SECRET:-}" ]]; then
+  echo "ADMIN_SESSION_SECRET=${ADMIN_SESSION_SECRET}" >> .env
+fi
 
 if [[ -n "${OLLAMA_API_KEY:-}" ]]; then
   echo "OLLAMA_API_KEY=${OLLAMA_API_KEY}" >> .env

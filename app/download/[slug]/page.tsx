@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { formatSize } from "@/lib/formatSize";
-import Header from "@/app/components/Header";
+import SiteHeader from "@/app/components/SiteHeader";
 import Footer from "@/app/components/Footer";
 import EntryCard from "@/app/components/EntryCard";
 import { prisma } from "@/lib/prisma";
@@ -79,7 +79,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Breadcrumb: Home > Apps > Productivity > App > Download */}
         <nav className="text-xs sm:text-sm text-slate-600 mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap">

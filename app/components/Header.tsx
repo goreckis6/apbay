@@ -12,7 +12,7 @@ function HeaderFallback() {
   );
 }
 
-function HeaderContent() {
+function HeaderContent({ logoUrl }: { logoUrl?: string | null }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,8 +52,13 @@ function HeaderContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight">
-              APKBAY.COM
+            <Link href="/" className="flex items-center shrink-0">
+              {logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logoUrl} alt="APKBAY" className="h-8 max-w-[180px] object-contain" />
+              ) : (
+                <span className="text-xl font-bold text-slate-900 tracking-tight">APKBAY.COM</span>
+              )}
             </Link>
           </div>
 
@@ -99,10 +104,10 @@ function HeaderContent() {
   );
 }
 
-export default function Header() {
+export default function Header({ logoUrl = null }: { logoUrl?: string | null }) {
   return (
     <Suspense fallback={<HeaderFallback />}>
-      <HeaderContent />
+      <HeaderContent logoUrl={logoUrl} />
     </Suspense>
   );
 }

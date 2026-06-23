@@ -11,6 +11,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./public/images:/app/public/images
+      - ./public/files:/app/public/files
+      - ./public/logo:/app/public/logo
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
       interval: 30s

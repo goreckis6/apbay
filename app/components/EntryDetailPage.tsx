@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatSize } from "@/lib/formatSize";
-import Header from "./Header";
+import SiteHeader from "./SiteHeader";
 import Footer from "./Footer";
 import EntryCard from "./EntryCard";
 import { parseContentBlocks } from "@/lib/contentBlocks";
@@ -63,7 +63,7 @@ export default function EntryDetailPage({ entry, relatedEntries, recommendedEntr
   return (
     <div className="min-h-screen flex flex-col bg-slate-100">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Breadcrumb */}
         <nav className="text-xs sm:text-sm text-slate-600 mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap">

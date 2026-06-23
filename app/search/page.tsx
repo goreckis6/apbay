@@ -1,4 +1,4 @@
-import Header from "@/app/components/Header";
+import SiteHeader from "@/app/components/SiteHeader";
 import Footer from "@/app/components/Footer";
 import EntryCard from "@/app/components/EntryCard";
 import { prisma } from "@/lib/prisma";
@@ -40,7 +40,7 @@ export default async function SearchPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-slate-800 mb-8">
           {query ? `Search results for "${query}"` : "Search"}
